@@ -290,23 +290,6 @@ async def clear_history(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         await update.message.reply_text("No history to clear.")
 
-async def broadcast_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Broadcast a message to all known users. Usage: /broadcast <text>"""
-    # Extract the broadcast text (everything after the command)
-    args = context.args
-    if not args:
-        await update.message.reply_text("Usage: /broadcast <message>")
-        return
-    broadcast_text = " ".join(args)
-    # Send to all stored user IDs in conversation_history
-    sent = 0
-    for user_id in conversation_history.keys():
-        try:
-            await context.bot.send_message(chat_id=user_id, text=broadcast_text)
-            sent += 1
-        except Exception as e:
-            logger.error(f"Failed to send broadcast to {user_id}: {e}")
-    await update.message.reply_text(f"✅ Broadcast sent to {sent} user(s).")
 
 async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Show bot and AI backend status."""
@@ -412,7 +395,7 @@ def main():
     application.add_handler(CommandHandler("help", help_command))
     application.add_handler(CommandHandler("clear", clear_history))
     application.add_handler(CommandHandler("status", status_command))
-    application.add_handler(CommandHandler("broadcast", broadcast_command))
+    
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
     # Error handler
